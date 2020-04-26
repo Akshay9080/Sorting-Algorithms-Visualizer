@@ -1,0 +1,9 @@
+.container{
+  height: 80vh;
+  width: 80vw;
+  margin: 30px auto;
+  background-color: #a6fbff;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+}

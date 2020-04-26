@@ -1,25 +1,23 @@
 import React, {Component} from 'react';
 import './App.css';
 import Display from './Display';
+import Controller from './Controller';
 
 class App extends Component {
   state = {
-    arr : [{id: 0, val: 10,col: "blue"},
-    {id: 1, val: 29,col: "blue"},
-    {id: 2, val: 37,col: "blue"},
-    {id: 3, val: 25,col: "blue"},
-    {id: 4, val: 15,col: "blue"},
-    {id: 5, val: 12,col: "blue"}
-    ]
+    arr : [],
+    num: 50,
+    towerWidth: 40
   }
 
   generateArray = (num) => {
     var A = [];
+    var max_height = window.innerHeight * 0.8 - 30;
     for(var i=0;i<num;i++){
       var ele = {
         id: i,
-        val: Math.round(Math.random() * 55) + 5,
-        col: "blue"
+        val: Math.round(Math.random() * max_height) + 20,
+        col: "#4c00ff"
       }
       A.push(ele);
     }
@@ -31,10 +29,23 @@ class App extends Component {
     this.setState({arr: a});
   }
 
+  updateProperties = (num, width) => {
+    var n = num;
+    var w = (width < 50) ? width : this.state.towerWidth;
+    this.setState({num: n, towerWidth: w});
+  }
+
   render(){
     return (
       <div className="App">
-        <Display arr = {this.state.arr} updateArray = {this.updateArray} generateArray = {this.generateArray} />
+
+        <Controller arr = {this.state.arr} updateArray = {this.updateArray}
+          generateArray = {this.generateArray} num = {this.state.num}
+          towerWidth = {this.state.towerWidth}
+          updateProperties = {this.updateProperties}/>
+
+        <Display arr = {this.state.arr} num = {this.state.num}
+          towerWidth = {this.state.towerWidth}/>
       </div>
     );
   }
