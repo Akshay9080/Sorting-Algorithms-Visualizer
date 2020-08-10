@@ -1,9 +1,10 @@
 import React from 'react';
 import './Controller.css';
 
-function Controller({arr,updateArray,generateArray,num,towerWidth,updateProperties}){
+function Controller({arr,updateArray,generateArray,num,towerWidth,
+    updateProperties}){
   const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
-  var speed = 100;
+  var speed = 200;
   //Select Sort
   var selectSort = async () => {
     var A = arr;
@@ -124,6 +125,58 @@ function Controller({arr,updateArray,generateArray,num,towerWidth,updateProperti
     updateArray(A);
   }
 
+  class MergeSorter {
+    static async merge(a, lo, mid, hi) {
+      const sorted = [];
+      let i = lo;
+      let j = mid;
+
+      while (i < mid && j < hi) {
+        if (a[i].val < a[j].val) {
+          sorted.push(a[i++]);
+        }
+        else {
+          sorted.push(a[j++]);
+        }
+      }
+
+      while (i < mid) sorted.push(a[i++]);
+      let l = lo;
+      for (let i = 0; i < sorted.length; i++) {
+        a[l++] = sorted[i];
+      }
+      for(let k=0;k<a.length;k++){
+        if(k >= lo && k < hi){
+          a[k].col = "#fbff00";
+        }else {
+          a[k].col = "#4c00ff";
+        }
+      }
+      await timeout((hi-lo) * speed);
+      updateArray(a);
+    }
+
+    static async sort(a, lo=0, hi=a.length) {
+      if (lo < hi - 1) {
+        const mid = Math.floor((lo + hi) / 2);
+        await MergeSorter.sort(a, lo, mid);
+        await MergeSorter.sort(a, mid, hi);
+        for(let k=0;k<a.length;k++){
+          if(k >= lo && k < mid){
+            a[k].col = "#ff1900";
+          }else if (k >= mid && k < hi) {
+            a[k].col = "#5eff00";
+          }else {
+            a[k].col = "#4c00ff";
+          }
+        }
+        await timeout(speed);
+        updateArray(a);
+        await MergeSorter.merge(a, lo, mid, hi);
+      }
+    }
+  }
+
   var manageArray = (event) => {
     num = event.target.value;
     towerWidth = (window.innerWidth * 0.8) / (num / 2) - 10;
@@ -134,14 +187,18 @@ function Controller({arr,updateArray,generateArray,num,towerWidth,updateProperti
 
   return (
     <div className = "controlBar">
-    <button onClick = {function(event){generateArray(num);}}> Generate New Array </button>
+    <button onClick = {function(event){generateArray(num);}}>
+      Generate New Array
+    </button>
     <div className = "seperator"></div>
     <button onClick = {bubbleSort}> Bubble Sort </button>
     <button onClick = {insertSort}> Insert Sort </button>
     <button onClick = {selectSort}> Selection Sort </button>
+    <button onClick = {() =>{MergeSorter.sort(arr);}}> Merge Sort </button>
     <div className = "seperator"></div>
     <span id="v"> {num}</span>
-    <input type="range" id="vol" name="vol" min="5" max="100" onInput={manageArray} onChange={manageArray} />
+    <input type="range" id="vol" name="vol" min="5" max="100"
+      onInput={manageArray} onChange={manageArray} />
     </div>
   )
 
